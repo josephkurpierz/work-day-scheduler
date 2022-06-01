@@ -1,34 +1,26 @@
 // set date in header 
 $("#currentDay").append(moment().format("dddd, MMMM Do"));
+
 var workHours = 8;
 var tasks = {};
 var rows = {};
 //infor needed to be stored locally for permenance
 var stuffToSave = {
   //need date to clear for each new day
-  todaysDate: Date,
+  saveDate: currentDay,
   //need time to know which row to populate on reload
   // timeColumnTime: time,
   // need task to know what to fill textArea with
   task: {}
 };
 
-// var setTime=function(){
-//   for(var i=0;i<workHours;i++){
-//     var time =moment().set("hour",9+i).format("hA");
-//     $("#hour").attr("data-index",i).value = time; 
-//   };
-// };
-// setTime();
 
-  // create task bars
+// create task bars to dynamically add to page
 var createTaskBar = function (index) {
   //create the row
   var timeBlock = $("<div>").addClass("row");
   //create the columns
   var taskHour = $("<div>").addClass("col hour").attr("data-index", index);
-  taskHour.value = moment().set("hour", 9+index).format("hA");
-  console.log(taskHour.value);
   var taskText = $("<textarea>").addClass("col-9").attr("data-index", index);
   var taskSave = $("<div>").addClass("col saveBtn").attr("data-index", index);
   // create the icon
@@ -41,25 +33,23 @@ var createTaskBar = function (index) {
   $(".container").append(timeBlock);
 };
 
-var initializePage = function () {
+var initializePage = function (taskHour) {
   var workHours = 8;
-  //var timeBlock = $("<div>").addClass("row");
-  //create the columns
-  //var taskHour = $("<div>").addClass("col hour");
-  //var taskText = $("<textarea>").addClass("col-9");
-  //var taskSave = $("<div>").addClass("col saveBtn");
-  // create the icon
-  //var saveIcon = $("<i>").addClass("fa-solid fa-floppy-disk");
+ 
   for (var i = 0; i < workHours; i++) {
     createTaskBar(i);
     //assign timeblocks time(left column) from 9AM-5PM with moment().format("hA")
-    //$("newHour").value = moment().set("hour", 9 + i).format("hA");
-    //target first column of row and add time to it as it is created
+    var time = moment().set("hour", 9 + i).format("hA");
+    console.log($("taskHour"));
+    console.log(time);
+    $("taskHour").textContent = time;
+    console.log($("taskHour").textContent);
+    // i don't know how to set the value of taskHour to time and make it display on page!?
     //maybe I need to do it in HTML?? don't know how to target dynamic creations
   }
 };
 
-initializePage();
+
 
 // add colors, current hour = bg-danger, not happened yet = bg-success, old =bg-secondary
 // moment object evaluating against time
@@ -78,5 +68,19 @@ initializePage();
   //save middle column to array with index
 // })
 // localStorage.setItem("task", middlecolumn)
+var saveData = function(taskText, e){
+  //var index = data-index of saveTask
+  var savedTextarea = $("taskText");//with associated data-index of save click
+  var savedDate = moment().format("dddd, MMMM Do")
+  var storedInfo = {
+    text: savedTextarea.value,
+    date: savedDate,
+  }
+  localStorage.setItem("textarea", JSON.stringify(storedInfo))
+}
 
-//initializePage();
+$("saveText").on("click", function() {
+  saveData();
+})
+
+initializePage();
