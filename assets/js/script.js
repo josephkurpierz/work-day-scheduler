@@ -20,11 +20,11 @@ var createTaskBar = function (index) {
   //create the row
   var timeBlock = $("<div>").addClass("row");
   //create the columns
-  var taskHour = $("<div>").addClass("col hour").attr("data-index", index);
-  var taskText = $("<textarea>").addClass("col-9").attr("data-index", index);
-  var taskSave = $("<div>").addClass("col saveBtn").attr("data-index", index);
+  var taskHour = $("<div>").attr("id", index + "hour").addClass("col hour");
+  var taskText = $("<textarea>").attr("id", index + "text").addClass("col-9");
+  var taskSave = $("<button>").attr("id", index + "save").addClass("col saveBtn");
   // create the icon
-  var saveIcon = $("<i>").addClass("fa-solid fa-floppy-disk").attr("data-index", index);
+  var saveIcon = $("<i>").addClass("fa-solid fa-floppy-disk");
   // attach the icon to the save column
   taskSave.append(saveIcon);
   //attach all three columns to the row
@@ -35,17 +35,19 @@ var createTaskBar = function (index) {
 
 var initializePage = function (taskHour) {
   var workHours = 8;
- 
+
   for (var i = 0; i < workHours; i++) {
     createTaskBar(i);
     //assign timeblocks time(left column) from 9AM-5PM with moment().format("hA")
     var time = moment().set("hour", 9 + i).format("hA");
-    console.log($("taskHour"));
+    console.log($(taskHour));
     console.log(time);
-    $("taskHour").textContent = time;
-    console.log($("taskHour").textContent);
+    $(taskHour).textContent = time;
+    console.log($(taskHour).textContent);
     // i don't know how to set the value of taskHour to time and make it display on page!?
     //maybe I need to do it in HTML?? don't know how to target dynamic creations
+    // retrieve values from local storage for middle textarea column
+      //if savedDate = moment(), else clear localStorage
   }
 };
 
@@ -65,12 +67,12 @@ var initializePage = function (taskHour) {
 // should be native with textarea?
 // save with right column
 // on("click", function(){
-  //save middle column to array with index
+//save middle column to array with index
 // })
 // localStorage.setItem("task", middlecolumn)
-var saveData = function(taskText, e){
+var saveData = function (taskText) {
   //var index = data-index of saveTask
-  var savedTextarea = $("taskText");//with associated data-index of save click
+  var savedTextarea = taskText;//with associated data-index of save click
   var savedDate = moment().format("dddd, MMMM Do")
   var storedInfo = {
     text: savedTextarea.value,
@@ -79,7 +81,8 @@ var saveData = function(taskText, e){
   localStorage.setItem("textarea", JSON.stringify(storedInfo))
 }
 
-$("saveText").on("click", function() {
+$("taskHour").click(function () {
+  console.log("click worked");
   saveData();
 })
 
