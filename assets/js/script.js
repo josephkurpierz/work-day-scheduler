@@ -93,51 +93,51 @@
 
 
 
-
+//abandoning dynamic creation...it is too hard :(
 //new session
-$(document).ready(function(){
+$(document).ready(function () {
+  //set date at top of schedule
   $("#currentDay").append(moment().format("dddd, MMMM Do"));
-  //listen for savebtn click
-  $(".row .saveBtn").on("click", function(e){
+
+  var workHours = [9, 10, 11, 12, 13, 14, 15, 16];
+  //get storage
+  setInterval(function () {
+    //loop through to check past/present/future and load tasks
+    for (var i = 0; i < workHours.length; i++) {
+      $("#hour-" + workHours[i] + " .description").val(localStorage.getItem(workHours[i]));
+    }
+    //updating current time to evaluate past present future
+    //loop over timeblocks .row to color code past/present/future
+    $(".row").each(function () {
+      var currentTime = moment().hour();
+      var timeScheduled = parseInt($(this).attr("id").split("-")[1]);
+      if (timeScheduled < currentTime) {
+        $(this).addClass("past").removeClass("present").removeClass("future");
+      }
+      else if (timeScheduled === currentTime) {
+        $(this).addClass("present").removeClass("past").removeClass("future");
+      }
+      else {
+        $(this).addClass("future").removeClass("past").removeClass("present");
+      };
+    });
+  }, (1000*60*60));
+
+  //load tasks previously stored to localStorage
+  for (var i = 0; i < workHours.length; i++) {
+    //loop through each work hour
+    $("#hour-" + workHours[i] + " .description").val(localStorage.getItem(workHours[i]));
+  };
+
+  //listen for button click
+  $(".row .saveBtn").on("click", function (e) {
     var btn = e.target;
-
     var index = btn.dataset.index;
-    console.log(index);
     // get nearby values to save to local storage
-    // var value = entry in text area
-    var taskText = $("textarea[data-index=" +"'"+ index +"'"+ "]").value //can't get it to read value of textarea
-      // var time = parsed rowID ...use time as key for local storage
-    var time = parseInt($(".timeBlock").attr("id").split("-")[1]);//only selects first row
-      //set local with time and value
-      console.log(time, taskText);
-
+    var taskText = $("textarea[data-index=" + "'" + index + "'" + "]").val();
+    // use time as key for local storage
+    var time = $(this).parent().attr("id").split("-")[1];
+    // set localStorage with time and textarea
     localStorage.setItem(time, taskText);
   });
-
-  //updating current time to evaluate past present future
-  //loop over timeblocks .row to color code past/present/future
-  $(".row").each(function(){
-    var currentTime = moment().hour();
-    var timeScheduled = parseInt($(this).attr("id").split("-")[1]);
-    if (timeScheduled < currentTime){
-      $(this).addClass("past").removeClass("present").removeClass("future");
-    } 
-    else if (timeScheduled === currentTime){
-      $(this).addClass("present").removeClass("past").removeClass("future");
-    } 
-    else{
-      $(this).addClass("future").removeClass("past").removeClass("present");
-    };
-  });
-  
-
-  //get storage
-  var interval = setInterval(function(){
-    //loop through to check past/present/future every hour
-    $("#hour-9 .task").val(localStorage.getItem("hour-9"))
-  }, (1000*60*60));
-   
-
-  
-  
 });
