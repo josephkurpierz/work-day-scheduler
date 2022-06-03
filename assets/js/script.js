@@ -121,7 +121,7 @@ $(document).ready(function () {
         $(this).addClass("future").removeClass("past").removeClass("present");
       };
     });
-  }, (1000*60*60));
+  }, (15000));
 
   //load tasks previously stored to localStorage
   for (var i = 0; i < workHours.length; i++) {
